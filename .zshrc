@@ -1,17 +1,47 @@
 
 # ========================
-# Python Environment (uv)
+# Path setup
 # ========================
 
-# Add uv-managed Python to PATH
-export PATH="$HOME/.local/share/uv/python/cpython-3.12.11-macos-aarch64-none/bin:$PATH"
+# Prepend uv-managed Python installations
+BREW_PREFIX=""
+if [ -d "$HOME/.local/share/uv/python" ]; then
+  for _uv_python_bin in "$HOME"/.local/share/uv/python/*/bin; do
+    [ -d "$_uv_python_bin" ] || continue
+    case ":$PATH:" in
+      *:"$_uv_python_bin":*) ;;
+      *) PATH="$_uv_python_bin:$PATH" ;;
+    esac
+  done
+  unset _uv_python_bin
+fi
+
+# Common local bin directory
+if [ -d "$HOME/.local/bin" ]; then
+  case ":$PATH:" in
+    *:"$HOME/.local/bin":*) ;;
+    *) PATH="$HOME/.local/bin:$PATH" ;;
+  esac
+fi
+
+# macOS Homebrew installs (skip Linuxbrew on Debian/Ubuntu)
+case "$(uname -s)" in
+  Darwin)
+    if command -v brew >/dev/null 2>&1; then
+      BREW_PREFIX="$(brew --prefix 2>/dev/null)"
+      PATH="$BREW_PREFIX/bin:$BREW_PREFIX/sbin:$PATH"
+    fi
+    ;;
+esac
 
 # ========================
 # Enhanced CLI Tools
 # ========================
 
 # Eza (better ls)
-alias ls="eza --icons=always"
+if command -v eza >/dev/null 2>&1; then
+  alias ls="eza --icons=always"
+fi
 
 # Zoxide (better cd)
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
@@ -23,14 +53,33 @@ command -v fzf >/dev/null 2>&1 && eval "$(fzf --zsh)"
 # Aliases
 # ========================
 
-alias code='open -a "Visual Studio Code"'
+case "$(uname -s)" in
+  Darwin)
+    alias code='open -a "Visual Studio Code"'
+    ;;
+esac
 
 # ========================
-# Completions
+# Completions & Prompt
 # ========================
 
-eval "$(starship init zsh)"
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
+
 bindkey -e
 
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+for _plugin_path in \
+  ${BREW_PREFIX:+$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh} \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh; do
+  [ -n "$_plugin_path" ] && [ -r "$_plugin_path" ] && source "$_plugin_path" && break
+done
+
+for _plugin_path in \
+  ${BREW_PREFIX:+$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh} \
+  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; do
+  [ -n "$_plugin_path" ] && [ -r "$_plugin_path" ] && source "$_plugin_path" && break
+done
+
+unset _plugin_path

@@ -1,48 +1,61 @@
 local wezterm = require 'wezterm'
 
-return {
-  -- Theme (Tokyo Night built-in)
-  color_scheme = "Tokyo Night",
+local config = {}
+if wezterm.config_builder then
+  config = wezterm.config_builder()
+end
 
-  -- Font setup4
-  font = wezterm.font_with_fallback {
-    "Menlo",
-    "Menlo Nerd Font",
-  },
-  font_size = 13.0,
+local is_darwin = wezterm.target_triple:match('darwin') ~= nil
 
-  initial_cols = 127,
-  initial_rows = 45,
+-- Theme (Tokyo Night built-in)
+config.color_scheme = 'Tokyo Night'
 
-  -- Transparency & blur (macOS only)
-  window_background_opacity = 0.9,
-  macos_window_background_blur = 10,
-
-
-  -- Padding
-  window_padding = {
-    left = 10,
-    right = 10,
-    top = 0,
-    bottom = 10,
-  },
-   -- Keybindings
-  keys = {
-    -- Cmd+Left = Ctrl-A (beginning of line)
-    { key = "LeftArrow", mods = "CMD", action = wezterm.action.SendString "\x01" },
-    -- Cmd+Right = Ctrl-E (end of line)
-    { key = "RightArrow", mods = "CMD", action = wezterm.action.SendString "\x05" },
-    -- Cmd+Backspace = Ctrl-U (delete to start of line)
-    { key = "Backspace", mods = "CMD", action = wezterm.action.SendString "\x15" },
-    -- Cmd+Up = Ctrl-P (previous line in history)
-    { key = "UpArrow", mods = "CMD", action = wezterm.action.SendString "\x10" },
-    -- Cmd+Down = Ctrl-N (next line in history)
-    { key = "DownArrow", mods = "CMD", action = wezterm.action.SendString "\x0e" },
-
-    -- Option/Alt+Left = ESC-b (backward word)
-    { key = "LeftArrow", mods = "OPT", action = wezterm.action.SendString "\x1bb" },
-    -- Option/Alt+Right = ESC-f (forward word)
-    { key = "RightArrow", mods = "OPT", action = wezterm.action.SendString "\x1bf" },
-  },
-
+-- Font setup with broader fallbacks
+config.font = wezterm.font_with_fallback {
+  'Menlo',
+  'Menlo Nerd Font',
+  'JetBrainsMono Nerd Font',
+  'FiraCode Nerd Font',
 }
+config.font_size = 13.0
+
+config.initial_cols = 127
+config.initial_rows = 45
+
+-- Transparency everywhere, blur when available
+config.window_background_opacity = 0.9
+if is_darwin then
+  config.macos_window_background_blur = 10
+end
+
+-- Padding
+config.window_padding = {
+  left = 10,
+  right = 10,
+  top = 0,
+  bottom = 10,
+}
+
+-- Shared keybindings
+config.keys = {
+  { key = 'LeftArrow', mods = 'OPT', action = wezterm.action.SendString '\x1bb' },
+  { key = 'LeftArrow', mods = 'ALT', action = wezterm.action.SendString '\x1bb' },
+  { key = 'RightArrow', mods = 'OPT', action = wezterm.action.SendString '\x1bf' },
+  { key = 'RightArrow', mods = 'ALT', action = wezterm.action.SendString '\x1bf' },
+}
+
+local function add_platform_keys(mod)
+  table.insert(config.keys, { key = 'LeftArrow', mods = mod, action = wezterm.action.SendString '\x01' })
+  table.insert(config.keys, { key = 'RightArrow', mods = mod, action = wezterm.action.SendString '\x05' })
+  table.insert(config.keys, { key = 'Backspace', mods = mod, action = wezterm.action.SendString '\x15' })
+  table.insert(config.keys, { key = 'UpArrow', mods = mod, action = wezterm.action.SendString '\x10' })
+  table.insert(config.keys, { key = 'DownArrow', mods = mod, action = wezterm.action.SendString '\x0e' })
+end
+
+if is_darwin then
+  add_platform_keys('CMD')
+else
+  add_platform_keys('SUPER')
+end
+
+return config
