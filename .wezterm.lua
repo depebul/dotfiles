@@ -26,7 +26,7 @@ config.initial_rows = 45
 -- Transparency everywhere, blur when available
 config.window_background_opacity = 0.9
 if is_darwin then
-  config.macos_window_background_blur = 10
+  config.macos_window_background_blur = 40
 end
 
 -- Padding
