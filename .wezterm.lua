@@ -12,6 +12,7 @@ config.color_scheme = 'Tokyo Night'
 
 -- Font setup with broader fallbacks
 config.font = wezterm.font_with_fallback {
+  'Fira Code',
   'Menlo',
   'Meslo LG S for Powerline',
   'Menlo Nerd Font',
