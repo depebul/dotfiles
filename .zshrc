@@ -47,7 +47,8 @@ fi
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 # FZF (fuzzy finder)
-command -v fzf >/dev/null 2>&1 && eval "$(fzf --zsh)"
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
 
 # ========================
 # Aliases
