@@ -21,11 +21,20 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+
 -- Plugin spec
 require("lazy").setup({
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
   { "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
   { "nvim-tree/nvim-tree.lua" },
   { "nvim-lualine/lualine.nvim" },
+  {
+  "folke/tokyonight.nvim",
+  lazy = false,      -- load at startup
+  priority = 1000,   -- make sure it loads first
+  config = function()
+    vim.cmd.colorscheme "tokyonight-night"
+  end,
+},
 })
 
