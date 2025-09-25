@@ -131,7 +131,7 @@ bindAltKey('-', function()
     end)
 end)
 
-bindAltKey(',', function()
+bindAltKey('f', function()
     withFocusedWindow(function(win)
         win:maximize()
     end)
@@ -180,14 +180,13 @@ end)
 local appHotkeys = {
     h = 'ChatGPT',
     d = 'Discord',
-    f = 'Finder',
     m = 'Mail',
     q = 'Messages',
     b = 'Safari',
     p = 'Spotify',
     v = 'Visual Studio Code',
     w = 'WhatsApp',
-    t = 'kitty',
+    t = 'WezTerm',
 }
 
 -- Bind Option+<key> to launch or focus the corresponding application.
