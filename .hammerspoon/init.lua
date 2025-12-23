@@ -186,7 +186,8 @@ local appHotkeys = {
     p = 'Spotify',
     v = 'Visual Studio Code',
     w = 'WhatsApp',
-    t = 'WezTerm',
+    t = 'iTerm',
+    i = 'Obsidian',
 }
 
 -- Bind Option+<key> to launch or focus the corresponding application.
